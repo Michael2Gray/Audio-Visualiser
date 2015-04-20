@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Audio Visualiser</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<!--Include the alertify javascript jquery plugin-->
+		<script src="js/alertify.min.js"></script>
+		<script type="text/javascript" src="js/BufferLoader.js"></script>
+
+		<link rel="stylesheet" href="style.css"></style>
+		<!--Include the alertify css classes-->
+		<link rel="stylesheet" href="alertify.core.css" />
+		<link rel="stylesheet" href="alertify.default.css" id="toggleCSS" />
+	</head>
+
+	<body>
+		<div id="container">
+			<header><span class="highlight">A</span>udio <span class="highlight">V</span>isualiser</header>
+			<div id="controlsContainer">
+				<!--The Contros that implememnt the functions inside the audio.js file-->
+				<div id="controls">
+					<p onclick="Audio.toggle();" class="controls">Play/Pause</p>
+					<!--<p onclick="Audio.play();" class="controls">Play</p>
+					<p onclick="Audio.stop();" class="controls">Stop</p>-->
+					<p onclick="Audio.prev();" class="controls">Prev</p>
+					<p onclick="Audio.next();" class="controls">Next</p>
+				</div>
+				<!--Controls the filters and Volume-->
+				<div class="filters">
+					<p>
+						Volume: <input type="range" min='0' max='100' step='1' value="50" oninput='Audio.changeVolume(this);'>
+						Filter on: <input type="checkbox" onclick="Audio.toggleFilter(this);">
+					</p>
+					<p>
+						Frequency: <input type="range" min='0' max='1' step='0.1' value="0" oninput='Audio.changeFrequency(this);'>
+						Quality: <input type="range" min='0' max='1' step='0.1' value="0" oninput='Audio.changeQuality(this);'>
+					</p>
+				</div>
+			</div>
+
+			<div id="visContainer">
+				<canvas id="canvas" height="500" width="800"></canvas>
+			</div>
+
+			<p>Audio Visualisation using Web Audio API <span class = "right" id="fade">Wait for the Popup --></span></p>
+		</div>
+
+		<!--Include the audio.js file-->
+		<script type="text/javascript" src="js/audio.js"></script>
+
+		<script type="text/javascript">
+			var context;
+			//variable to store an instance of the BufferLoader.js file
+			var bufferLoader;
+			//array to store the songs used, urls i.e. "audio/song_name.mp3"
+			var tracks = [];
+
+			window.addEventListener('load', init, false);
+
+			function init()
+			{
+				window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+				//creates a new audio context
+				context = new AudioContext();
+
+				//creates a new Bufferloader with the audio context, the mp3 files used and the finishedLoading function as parameters
+				bufferLoader = new BufferLoader(context, tracks, finishedLoading);
+
+				//initialses the load function in the bufferLoader
+				bufferLoader.load();
+			}
+
+			function finishedLoading(bufferList)
+			{
+				console.log("Finished Loading");
+				console.log(bufferList);
+
+				alertify.success("Finished Loading Audio");
+			}
+
+			$(document).ready(function() 
+			{
+  				$( "#fade" ).fadeOut( 20000, function() 
+  				{
+    				// Animation complete.
+  				});
+			});
+		</script>
+	</body>
+</html>
